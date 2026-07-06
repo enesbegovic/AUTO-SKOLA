@@ -10,4 +10,7 @@ public:
 	~Baza();
 	void IzvrsiUpit(string sql, string PorukaGreske);
 	void KreirajTabelu();
+	void DodajAutomobil(string Marka, string Registracija);
+	void UkloniAutomobil(string Registracija);
+	void PrikaziSveAutomobile();
 };

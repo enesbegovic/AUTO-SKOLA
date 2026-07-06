@@ -51,3 +51,46 @@ void Baza::KreirajTabelu() {
 	IzvrsiUpit(KreirajPolaganja, "GRESKA PRI KREIRANJU TABELE POLAGANJA");
 		
 }
+void Baza::DodajAutomobil(string Marka, string Registracija) {
+	int count = 0;
+	string Provjera =
+		"SELECT COUNT(*) FROM Automobili WHERE RegistarskaOznaka='" + Registracija + "';";
+	sqlite3_exec(db, Provjera.c_str(),
+		[](void* data, int, char** podaci, char**) {
+			*(int*)data = atoi(podaci[0]);
+			return 0;
+		}, &count, nullptr);
+	if (count > 0)
+		cout << "GRESKA PRI DODAVANJU AUTOMOBILA-AUTOMOBIL VEC POSTOJI!!!" << endl;
+	string sql =
+		"INSERT INTO Automobili(MarkaAutomobila, RegistarskaOznaka) VALUES('"
+		+ Marka + "', '" + Registracija + "');";
+	IzvrsiUpit(sql, "GRESKA PRI DODAVANJU AUTOMOBILA");
+
+}
+void Baza::UkloniAutomobil(string Registracija) {
+	int count = 0;
+	string Provjera =
+		"SELECT COUNT(*) FROM Automobili WHERE RegistarskaOznaka='" + Registracija + "';";
+	sqlite3_exec(db, Provjera.c_str(),
+		[](void* data, int, char** podaci, char**) {
+			*(int*)data = atoi(podaci[0]);
+			return 0;
+		}, &count, nullptr);
+	if (count == 0)
+		cout << "GRESKA PRI UKLANJANU AUTOMOBILA-TRAZENI AUTOMOBIL NE POSTOJI!!!" << endl;
+	string sql =
+		"DELETE FROM Automobili WHERE RegistarskaOznaka='" + Registracija + "';";
+	IzvrsiUpit(sql, "GRESKA PRI UKLANJANJU AUTOMOBILA");
+}
+void Baza::PrikaziSveAutomobile() {
+	string sql =
+		"SELECT * FROM Automobili;";
+	sqlite3_exec(db, sql.c_str(),
+		[](void*, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << podaci[i] << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, nullptr);
+}
