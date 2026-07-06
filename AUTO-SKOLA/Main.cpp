@@ -6,4 +6,5 @@ int main() {
 	Baza baza;
 	baza.KreirajTabelu();
 	cout << "Tabele kreirane!" << endl;
+	
 }

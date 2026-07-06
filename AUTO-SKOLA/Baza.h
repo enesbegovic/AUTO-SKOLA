@@ -13,4 +13,7 @@ public:
 	void DodajAutomobil(string Marka, string Registracija);
 	void UkloniAutomobil(string Registracija);
 	void PrikaziSveAutomobile();
+	void DodajInstruktora(string ImePrezime, string JMBG);
+	void UkloniInstruktora(string JMBG);
+	void PrikaziSveInstruktore();
 };
