@@ -136,3 +136,45 @@ void Baza::PrikaziSveInstruktore() {
 			return 0;
 		}, nullptr, nullptr);
 }
+void Baza::DodajKandidata(string ImePrezime, string DatumRodjenja, string JMBG) {
+	int count = 0;
+	string Provjera =
+		"SELECT COUNT(*) FROM Kandidati WHERE JMBG='" + JMBG + "';";
+	sqlite3_exec(db, Provjera.c_str(),
+		[](void* data, int, char** podaci, char**) {
+			*(int*)data = atoi(podaci[0]);
+			return 0;
+		}, &count, nullptr);
+	if (count > 0)
+		cout << "GRESKA PRI DODAVANJU KANDIDATA-KANDIDAT VEC POSTOJI" << endl;
+	string sql =
+		"INSERT INTO Kandidati(ImePrezime, DatumRodjenja, JMBG) VALUES('"
+		+ ImePrezime + "', '" + DatumRodjenja + "', '" + JMBG + "');";
+	IzvrsiUpit(sql, "GRESKA PRI DODAVANJU KANDIDATA");
+}
+void Baza::UkloniKandidata(string JMBG) {
+	int count = 0;
+	string Provjera =
+		"SELECT COUNT(*) FROM Kandidati WHERE JMBG='" + JMBG + "';";
+	sqlite3_exec(db, Provjera.c_str(),
+		[](void* data, int, char** podaci, char**) {
+			*(int*)data = atoi(podaci[0]);
+			return 0;
+		}, &count, nullptr);
+	if (count == 0)
+		cout << "GRESKA PRI BRISANJU KANDIDATA-NE POSTOJI TRAZENI KANDIDAT" << endl;
+	string sql =
+		"DELETE FROM Kandidati WHERE JMBG='" + JMBG + "';";
+	IzvrsiUpit(sql, "GRESKA PRI BRISANJU KANDIDATA");
+}
+void Baza::PrikaziSveKandidate() {
+	string sql =
+		"SELECT * FROM Kandidati;";
+	sqlite3_exec(db, sql.c_str(),
+		[](void* data, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << podaci[i] << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, nullptr);
+}

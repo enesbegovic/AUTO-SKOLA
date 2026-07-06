@@ -16,4 +16,7 @@ public:
 	void DodajInstruktora(string ImePrezime, string JMBG);
 	void UkloniInstruktora(string JMBG);
 	void PrikaziSveInstruktore();
+	void DodajKandidata(string ImePrezime, string DatumRodjenja, string JMBG);
+	void UkloniKandidata(string JMBG);
+	void PrikaziSveKandidate();
 };
