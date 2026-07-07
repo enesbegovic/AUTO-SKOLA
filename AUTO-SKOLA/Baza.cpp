@@ -322,3 +322,27 @@ void Baza::PrikaziAktivnaPolaganja() {
 		sqlite3_free(errMsg);
 	}
 }
+void Baza::PrikaziSvaZavrsenaPolaganja() {
+	string sql =
+		"SELECT Kandidati.ImePrezime, Kandidati.JMBG, Instruktori.ImePrezime, Automobili.MarkaAutomobila, Automobili.RegistarskaOznaka, Polaganja.Kategorija, Polaganja.DatumPolaganja, "
+		"CASE WHEN Polozio IS NULL THEN '---' "
+		"WHEN Polozio=1 THEN 'KANDIDAT JE POLOZIO' "
+		"ELSE 'KANDIDAT NIJE POLOZIO' END AS Polozio "
+		"FROM Polaganja "
+		"JOIN Kandidati ON Polaganja.KandidatID=Kandidati.ID "
+		"JOIN Instruktori ON Polaganja.InstruktorID=Instruktori.ID "
+		"JOIN Automobili ON Polaganja.AutomobilID=Automobili.ID "
+		"WHERE Polozio=1 OR Polozio=0;";
+	char* errMsg = nullptr;
+	int rc = sqlite3_exec(db, sql.c_str(),
+		[](void*, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << podaci[i] << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, nullptr);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA U PRIKAZU AKTIVNIH POLAGANJA:" << errMsg << endl;
+		sqlite3_free(errMsg);
+	}
+}

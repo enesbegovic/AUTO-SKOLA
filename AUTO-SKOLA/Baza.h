@@ -23,4 +23,5 @@ public:
 	void UnesiRezlutatePolaganja(string Kandidat, string DatumPolaganja, bool Polozio);
 	void PrikaziSvaPolaganja();
 	void PrikaziAktivnaPolaganja();
+	void PrikaziSvaZavrsenaPolaganja();
 };

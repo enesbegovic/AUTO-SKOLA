@@ -21,7 +21,8 @@ int main() {
 		cout << "11.Unesi rezultate polaganja" << endl;
 		cout << "12.Prikazi sva polaganja" << endl;
 		cout << "13.Prikazi sva aktivna polaganja" << endl;
-		cout << "14.Izlaz" << endl;
+		cout << "14.Prikazi sva zavrsena polaganja" << endl;
+		cout << "15.Izlaz" << endl;
 		cin >> izbor;
 		cin.ignore();
 		switch (izbor) {
@@ -169,6 +170,11 @@ int main() {
 		}
 		case 14:
 		{
+			baza.PrikaziSvaZavrsenaPolaganja();
+			break;
+		}
+		case 15:
+		{
 			cout << "DOVIDJENJA" << endl;
 			break;
 		}
@@ -179,6 +185,6 @@ int main() {
 		}
 		}
 
-	}while (izbor != 14);
+	}while (izbor != 15);
 	
 }
