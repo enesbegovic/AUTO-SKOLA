@@ -316,7 +316,7 @@ void Baza::PrikaziAktivnaPolaganja() {
 				cout << nazivKolone[i] << ": " << podaci[i] << endl;
 			cout << "---" << endl;
 			return 0;
-		}, nullptr, nullptr);
+		}, nullptr, &errMsg);
 	if (rc != SQLITE_OK) {
 		cout << "GRESKA U PRIKAZU AKTIVNIH POLAGANJA:" << errMsg << endl;
 		sqlite3_free(errMsg);
@@ -340,9 +340,9 @@ void Baza::PrikaziSvaZavrsenaPolaganja() {
 				cout << nazivKolone[i] << ": " << podaci[i] << endl;
 			cout << "---" << endl;
 			return 0;
-		}, nullptr, nullptr);
+		}, nullptr, &errMsg);
 	if (rc != SQLITE_OK) {
-		cout << "GRESKA U PRIKAZU AKTIVNIH POLAGANJA:" << errMsg << endl;
+		cout << "GRESKA U PRIKAZU ZAVRSENIH POLAGANJA:" << errMsg << endl;
 		sqlite3_free(errMsg);
 	}
 }
