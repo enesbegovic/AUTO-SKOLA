@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="AUTO-SKOLA/AUTO-SKOLA.vcxproj" />
+  <Project Path="AUTO-SKOLA/AUTO-SKOLA.vcxproj" Id="28a10cea-30cd-48f4-a435-770ddd3abbbd" />
 </Solution>

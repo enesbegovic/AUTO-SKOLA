@@ -19,4 +19,7 @@ public:
 	void DodajKandidata(string ImePrezime, string DatumRodjenja, string JMBG);
 	void UkloniKandidata(string JMBG);
 	void PrikaziSveKandidate();
+	void ZakaziPolaganje(string Kandidat, string Instruktor, string Automobil, string Kategorija, string DatumPolaganja);
+	void UnesiRezlutatePolaganja(string Kandidat, string DatumPolaganja, bool Polozio);
+	void PrikaziSvaPolaganja();
 };
