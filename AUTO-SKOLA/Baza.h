@@ -22,4 +22,5 @@ public:
 	void ZakaziPolaganje(string Kandidat, string Instruktor, string Automobil, string Kategorija, string DatumPolaganja);
 	void UnesiRezlutatePolaganja(string Kandidat, string DatumPolaganja, bool Polozio);
 	void PrikaziSvaPolaganja();
+	void PrikaziAktivnaPolaganja();
 };
