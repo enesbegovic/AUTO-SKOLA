@@ -24,4 +24,6 @@ public:
 	void PrikaziSvaPolaganja();
 	void PrikaziAktivnaPolaganja();
 	void PrikaziSvaZavrsenaPolaganja();
+	void PrikaziNajmladjegKandidata();
+	void PrikaziNajstarijegKandidata();
 };

@@ -346,3 +346,65 @@ void Baza::PrikaziSvaZavrsenaPolaganja() {
 		sqlite3_free(errMsg);
 	}
 }
+void Baza::PrikaziNajmladjegKandidata() {
+	string sql =
+		"WITH Split1 AS("
+		"SELECT ImePrezime, JMBG, DatumRodjenja, "
+		"instr(DatumRodjenja, '.') AS P1, "
+		"substr(DatumRodjenja, instr(DatumRodjenja, '.')+1) AS Rest "
+		"FROM Kandidati"
+		"), "
+		"Split2 AS ("
+		"SELECT ImePrezime, JMBG, DatumRodjenja, "
+		"substr(DatumRodjenja, 1, P1-1)AS Dan, "
+		"substr(Rest, 1, instr(Rest, '.')-1) AS Mjesec, "
+		"substr(Rest, instr(Rest, '.')+1) AS Godina "
+		"FROM Split1"
+		") "
+		"SELECT ImePrezime, JMBG, DatumRodjenja FROM Split2 "
+		"ORDER BY CAST(Godina AS INTEGER) DESC, CAST(Mjesec AS INTEGER) DESC, CAST(Dan AS INTEGER) DESC "
+		"LIMIT 1;";
+	char* errMsg = nullptr;
+	int rc = sqlite3_exec(db, sql.c_str(),
+		[](void*, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << (podaci[i] ? podaci[i] : "NULL") << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, &errMsg);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA U PRIKAZU NAJMLADJEG KANDIDATA:" << errMsg << endl;
+		sqlite3_free(errMsg);
+	}
+}
+void Baza::PrikaziNajstarijegKandidata() {
+	string sql =
+		"WITH Split1 AS("
+		"SELECT ImePrezime, JMBG, DatumRodjenja, "
+		"instr(DatumRodjenja, '.')AS P1, "
+		"substr(DatumRodjenja, instr(DatumRodjenja, '.')+1)AS Rest "
+		"FROM Kandidati"
+		"), "
+		"Split2 AS("
+		"SELECT ImePrezime, JMBG, DatumRodjenja, "
+		"substr(DatumRodjenja, 1, P1-1)AS Dan, "
+		"substr(Rest, 1, instr(Rest, '.')-1)AS Mjesec, "
+		"substr(Rest, instr(Rest, '.')+1)AS Godina "
+		"FROM Split1"
+		") "
+		"SELECT ImePrezime, JMBG, DatumRodjenja FROM Split2 "
+		"ORDER BY CAST(Godina AS INTEGER) ASC, CAST(Mjesec AS INTEGER) ASC, CAST(Dan AS INTEGER) ASC "
+		"LIMIT 1;";
+	char* errMsg = nullptr;
+	int rc = sqlite3_exec(db, sql.c_str(),
+		[](void*, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << (podaci[i] ? podaci[i] : "NULL") << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, &errMsg);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA PRI PRIKAZU NAJSTARIJEG KANDIDATA:" << errMsg << endl;
+		sqlite3_free(errMsg);
+	}
+}
