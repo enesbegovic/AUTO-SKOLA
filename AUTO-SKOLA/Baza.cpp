@@ -408,3 +408,26 @@ void Baza::PrikaziNajstarijegKandidata() {
 		sqlite3_free(errMsg);
 	}
 }
+void Baza::PrikaziSveKandidateSaNjihovimStatusom() {
+	string sql =
+		"SELECT Kandidati.ImePrezime, Kandidati.DatumRodjenja, Kandidati.JMBG, "
+		"Polaganja.DatumPolaganja, "
+		"CASE WHEN Polaganja.ID IS NULL THEN 'KANDIDAT NEMA ZAKAZANO POLAGANJE' "
+		"WHEN Polaganja.Polozio IS NULL THEN 'CEKA IZLAZAK NA POLAGANJE/CEKA REZULTATE' "
+		"WHEN Polaganja.Polozio=1 THEN 'KANDIDAT JE POLOZIO' "
+		"ELSE 'KANDIDAT NIJE POLOZIO' END AS Status "
+		"FROM Kandidati "
+		"LEFT JOIN Polaganja ON Kandidati.ID=Polaganja.KandidatID;";
+	char* errMsg = nullptr;
+	int rc = sqlite3_exec(db, sql.c_str(),
+		[](void* data, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << (podaci[i] ? podaci[i] : "-") << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, &errMsg);
+	if (rc != SQLITE_OK) {
+		cout << "GRSKA PRI PRIKAZU STATUSA KANDIDATA:" << errMsg << endl;
+		sqlite3_free(errMsg);
+	}
+}
