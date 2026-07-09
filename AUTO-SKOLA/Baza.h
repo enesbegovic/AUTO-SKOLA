@@ -27,4 +27,6 @@ public:
 	void PrikaziNajmladjegKandidata();
 	void PrikaziNajstarijegKandidata();
 	void PrikaziSveKandidateSaNjihovimStatusom();
+	void PrikaziBrojPolaganjaZaSveInstruktore();
+	void PrikaziSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja();
 };

@@ -431,3 +431,43 @@ void Baza::PrikaziSveKandidateSaNjihovimStatusom() {
 		sqlite3_free(errMsg);
 	}
 }
+void Baza::PrikaziBrojPolaganjaZaSveInstruktore() {
+	string sql =
+		"SELECT Instruktori.ImePrezime, COUNT(*) AS BrojPolaganja "
+		"FROM Polaganja "
+		"JOIN Instruktori ON Polaganja.InstruktorID=Instruktori.ID "
+		"GROUP BY Instruktori.ID;";
+	char* errMsg = nullptr;
+	int rc = sqlite3_exec(db, sql.c_str(),
+		[](void*, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << (podaci[i] ? podaci[i] : "-") << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, &errMsg);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA PRI PRIKAZU:" << errMsg << endl;
+		sqlite3_free(errMsg);
+	}
+}
+void Baza::PrikaziSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja() {
+	string sql =
+		"SELECT Instruktori.ImePrezime, COUNT(*) AS BrojAktivnihPolaganja "
+		"FROM Polaganja "
+		"JOIN Instruktori ON Polaganja.InstruktorID=Instruktori.ID "
+		"WHERE Polozio IS NULL OR Polozio=0 "
+		"GROUP BY Instruktori.ID "
+		"HAVING COUNT(*) > 1;";
+	char* errMsg = nullptr;
+	int rc = sqlite3_exec(db, sql.c_str(),
+		[](void*, int kolone, char** podaci, char** nazivKolone) {
+			for (int i = 0; i < kolone; i++)
+				cout << nazivKolone[i] << ": " << (podaci[i] ? podaci[i] : "-") << endl;
+			cout << "---" << endl;
+			return 0;
+		}, nullptr, &errMsg);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA PRI PRIKAZU:" << errMsg << endl;
+		sqlite3_free(errMsg);
+	}
+}
