@@ -23,11 +23,10 @@ int main() {
 		cout << "13.Prikazi sva aktivna polaganja" << endl;
 		cout << "14.Prikazi sva zavrsena polaganja" << endl;
 		cout << "15.Prikazi najmlajdeg kandidata" << endl;
-		cout << "16.Prikazi najstarijeg kandidata" << endl;
-		cout << "17.Prikazi sve kandidate i njihove statuse" << endl;
-		cout << "18.Prikazi broj polaganja za svakog instruktora" << endl;
-		cout << "19.Prikazi sve zauzete instruktore(instruktori koji imaju vise od 1 aktivnog polaganja)" << endl;
-		cout << "20.Izlaz" << endl;
+		cout << "16.Prikazi sve kandidate i njihove statuse" << endl;
+		cout << "17.Prikazi broj polaganja za svakog instruktora" << endl;
+		cout << "18.Prikazi sve zauzete instruktore(instruktori koji imaju vise od 1 aktivnog polaganja)" << endl;
+		cout << "19.Izlaz" << endl;
 		cin >> izbor;
 		cin.ignore();
 		switch (izbor) {
@@ -44,11 +43,11 @@ int main() {
 			cout << "Unesite godinu rodjenja kandidata: ";
 			cin >> godina;
 			cin.ignore();
-			string DatumStr = to_string(dan) + "." + to_string(mjesec) + "." + to_string(godina);
+			string DatumISO = to_string(godina) + "-" + (mjesec < 10 ? "0" : "") +  to_string(mjesec) + "-" + (dan < 10 ? "0" : "") + to_string(dan);
 			string JMBG;
 			cout << "Unesite JMBG kandidata: ";
 			getline(cin, JMBG);
-			baza.DodajKandidata(ImePrezime, DatumStr, JMBG);
+			baza.DodajKandidata(ImePrezime, DatumISO, JMBG);
 			break;
 		}
 		case 2:
@@ -134,33 +133,22 @@ int main() {
 			cout << "Unesite godinu polaganja: ";
 			cin >> godina;
 			cin.ignore();
-			string DatumPolaganjaStr = to_string(dan) + "." + to_string(mjesec) + "." + to_string(godina);
-			baza.ZakaziPolaganje(JMBGKandidata, JMBGInstruktora, Automobil, Kategorija, DatumPolaganjaStr);
+			string DatumPolaganjaISO = to_string(godina) + "-" + (mjesec < 10 ? "0" : "") + to_string(mjesec) + "-" + (dan < 10 ? "0" : "") + to_string(dan);
+			baza.ZakaziPolaganje(JMBGKandidata, JMBGInstruktora, Automobil, Kategorija, DatumPolaganjaISO);
 			break;
 		}
 		case 11:
 		{
-			string JMBGKandidata;
-			cout << "Unesite JMBG kandidata za kojeg unosite rezultate: ";
-			getline(cin, JMBGKandidata);
 			int dan, mjesec, godina;
-			cout << "Unesite dan na koji je polagao kandidat: ";
+			cout << "Unesite dan polaganja za koje zelite unijeti rezultate: ";
 			cin >> dan;
-			cout << "Unesite mjesec na koji je polagao kandidat: ";
+			cout << "Unesite mjesec polaganja za koje zelite unijeti rezultate: ";
 			cin >> mjesec;
-			cout << "Unesite godinu na koju je polagao kandidat: ";
+			cout << "Unesite godinu polaganja za koje zelite unijeti rezultate: ";
 			cin >> godina;
 			cin.ignore();
-			string DatumStr = to_string(dan) + "." + to_string(mjesec) + "." + to_string(godina);
-			string Odgovor;
-			cout << "Da li je student polozio(DA/NE)" << endl;
-			cin >> Odgovor;
-			bool Polozio = (Odgovor == "Da" || Odgovor == "DA");
-			if (Polozio)
-				cout << "KANDIDAT JE POLOZIO" << endl;
-			else
-				cout << "KANDIDAT NIJE POLOZIO" << endl;
-			baza.UnesiRezlutatePolaganja(JMBGKandidata, DatumStr, Polozio);
+			string DatumISO = to_string(godina) + "-" + (mjesec < 10 ? "0" : "") + to_string(mjesec) + "-" + (dan < 10 ? "0" : "") + to_string(dan);
+			baza.UnesiRezlutatePolaganja(DatumISO);
 			break;
 		}
 		case 12:
@@ -185,25 +173,20 @@ int main() {
 		}
 		case 16:
 		{
-			baza.PrikaziNajstarijegKandidata();
+			baza.PrikaziSveKandidateSaNjihovimStatusom();
 			break;
 		}
 		case 17:
 		{
-			baza.PrikaziSveKandidateSaNjihovimStatusom();
+			baza.PrikaziBrojPolaganjaZaSveInstruktore();
 			break;
 		}
 		case 18:
 		{
-			baza.PrikaziBrojPolaganjaZaSveInstruktore();
-			break;
-		}
-		case 19:
-		{
 			baza.PrikaziSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja();
 			break;
 		}
-		case 20:
+		case 19:
 		{
 			cout << "DOVIDJENJA" << endl;
 			break;
@@ -215,6 +198,6 @@ int main() {
 		}
 		}
 
-	}while (izbor != 20);
+	}while (izbor != 19);
 	
 }

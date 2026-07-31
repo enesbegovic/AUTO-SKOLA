@@ -20,12 +20,11 @@ public:
 	void UkloniKandidata(string JMBG);
 	void PrikaziSveKandidate();
 	void ZakaziPolaganje(string Kandidat, string Instruktor, string Automobil, string Kategorija, string DatumPolaganja);
-	void UnesiRezlutatePolaganja(string Kandidat, string DatumPolaganja, bool Polozio);
+	void UnesiRezlutatePolaganja(string DatumPolaganja);
 	void PrikaziSvaPolaganja();
 	void PrikaziAktivnaPolaganja();
 	void PrikaziSvaZavrsenaPolaganja();
 	void PrikaziNajmladjegKandidata();
-	void PrikaziNajstarijegKandidata();
 	void PrikaziSveKandidateSaNjihovimStatusom();
 	void PrikaziBrojPolaganjaZaSveInstruktore();
 	void PrikaziSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja();
