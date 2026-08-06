@@ -4,4 +4,5 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="AUTO-SKOLA/AUTO-SKOLA.vcxproj" Id="28a10cea-30cd-48f4-a435-770ddd3abbbd" />
+  <Project Path="AUTO-SKOLA_Testovi/AUTO-SKOLA_Testovi.vcxproj" Id="4f254801-9a02-40d0-a87d-9134ad8b1f6c" />
 </Solution>
