@@ -1,5 +1,7 @@
 # AUTO-SKOLA
 
+![Build and Test](https://github.com/enesbegovic/AUTO-SKOLA/actions/workflows/build.yml/badge.svg)
+
 Konzolna C++ aplikacija za upravljanje auto-školom (kandidati, instruktori, automobili, polaganja), sa SQLite bazom podataka. Sav rad sa bazom ide preko prepared statements.
 
 ## Tehnologije
@@ -72,3 +74,13 @@ Konzolna C++ aplikacija za upravljanje auto-školom (kandidati, instruktori, aut
 1. Otvoriti `.slnx` fajl u Visual Studio-u
 2. Build (Debug/x64)
 3. Pokrenuti — baza (`AUTO-SKOLA.db`) se automatski kreira pri prvom pokretanju ako ne postoji
+
+## Testiranje
+
+Projekat sadrži 19 jediničnih testova (Google Test) koji pokrivaju rad sa Automobilima, Instruktorima, Kandidatima i Polaganjima, uključujući unos i provjeru rezultata polaganja.
+
+Testovi se nalaze u `AUTO-SKOLA_Testovi` projektu i mogu se pokrenuti kroz Visual Studio Test Explorer (Test → Run All Tests).
+
+## CI/CD
+
+Svaki push na `master` granu automatski pokreće build i sve testove preko GitHub Actions (vidi `.github/workflows/build.yml`).
