@@ -784,3 +784,96 @@ void Baza::PrikaziSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja() {
 		cout << "---" << endl;
 	}
 }
+vector<Automobil>Baza::UzmiSveAutomobile() {
+	vector<Automobil>rezultat;
+	sqlite3_stmt* rawStmt;
+	string sql =
+		"SELECT * FROM Automobili;";
+	int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &rawStmt, nullptr);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA PRI PRIPREMI UZIMANJA AUTOMOBILA:" << sqlite3_errmsg(db) << endl;
+		return rezultat;
+	}
+	StmtPtr stmt(rawStmt);
+	while (sqlite3_step(stmt.get()) == SQLITE_ROW) {
+		Automobil a;
+		a.ID = sqlite3_column_int(stmt.get(), 0);
+		a.Marka = (const char*)sqlite3_column_text(stmt.get(), 1);
+		a.Registracija = (const char*)sqlite3_column_text(stmt.get(), 2);
+		rezultat.push_back(a);
+	}
+	return rezultat;
+}
+vector<Instruktor>Baza::UzmiSveInstruktore() {
+	vector<Instruktor>rezultat;
+	sqlite3_stmt* rawStmt;
+	string sql =
+		"SELECT * FROM Instruktori;";
+	int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &rawStmt, nullptr);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA PRI PRIPREMI UZIMANJA INSTRUKTORA:" << sqlite3_errmsg(db) << endl;
+		return rezultat;
+	}
+	StmtPtr stmt(rawStmt);
+	while (sqlite3_step(stmt.get()) == SQLITE_ROW) {
+		Instruktor i;
+		i.ID = sqlite3_column_int(stmt.get(), 0);
+		i.ImePrezime = (const char*)sqlite3_column_text(stmt.get(), 1);
+		i.JMBG = (const char*)sqlite3_column_text(stmt.get(), 2);
+		rezultat.push_back(i);
+	}
+	return rezultat;
+}
+vector<Kandidat>Baza::UzmiSveKandidate() {
+	vector<Kandidat>rezultat;
+	sqlite3_stmt* rawStmt;
+	string sql =
+		"SELECT * FROM Kandidati;";
+	int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &rawStmt, nullptr);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA PRI PRIPREMI UZIMANJA KANDIDATA:" << sqlite3_errmsg(db) << endl;
+		return rezultat;
+	}
+	StmtPtr stmt(rawStmt);
+	while (sqlite3_step(stmt.get()) == SQLITE_ROW) {
+		Kandidat k;
+		k.ID = sqlite3_column_int(stmt.get(), 0);
+		k.ImePrezime = (const char*)sqlite3_column_text(stmt.get(), 1);
+		k.DatumRodjenja = (const char*)sqlite3_column_text(stmt.get(), 2);
+		k.JMBG = (const char*)sqlite3_column_text(stmt.get(), 3);
+		rezultat.push_back(k);
+	}
+	return rezultat;
+}
+vector<Polaganje>Baza::UzmiSvaPolaganja() {
+	vector<Polaganje>rezultat;
+	sqlite3_stmt* rawStmt;
+	string sql=
+		"SELECT Kandidati.ImePrezime, Kandidati.JMBG, Instruktori.ImePrezime, Automobili.MarkaAutomobila, Automobili.RegistarskaOznaka, Polaganja.Kategorija, Polaganja.DatumPolaganja, "
+		"CASE WHEN Polozio IS NULL THEN 'KANDIDAT CEKA POLAGANJE' "
+		"WHEN Polozio=1 THEN 'KANDIDAT JE POLOZIO' "
+		"ELSE 'KANDIDAT NIJE POLOZIO' END AS Polozio "
+		"FROM Polaganja "
+		"JOIN Kandidati ON Polaganja.KandidatID=Kandidati.ID "
+		"JOIN Instruktori ON Polaganja.InstruktorID=Instruktori.ID "
+		"JOIN Automobili ON Polaganja.AutomobilID=Automobili.ID;";
+	int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &rawStmt, nullptr);
+	if (rc != SQLITE_OK) {
+		cout << "GRESKA PRI PRIPREMI UZIMANJA POLAGANJA:" << sqlite3_errmsg(db) << endl;
+		return rezultat;
+	}
+	StmtPtr stmt(rawStmt);
+	while (sqlite3_step(stmt.get()) == SQLITE_ROW) {
+		Polaganje p;
+		p.ImePrezimeKandidata = (const char*)sqlite3_column_text(stmt.get(), 0);
+		p.JMBG = (const char*)sqlite3_column_text(stmt.get(), 1);
+		p.ImePrezimeInstruktora = (const char*)sqlite3_column_text(stmt.get(), 2);
+		p.MarkaAutomobila = (const char*)sqlite3_column_text(stmt.get(), 3);
+		p.RegistarskaOznaka = (const char*)sqlite3_column_text(stmt.get(), 4);
+		p.Kategorija = (const char*)sqlite3_column_text(stmt.get(), 5);
+		p.DatumPolaganja = (const char*)sqlite3_column_text(stmt.get(), 6);
+		p.Polozio = (const char*)sqlite3_column_text(stmt.get(), 7);
+		rezultat.push_back(p);
+	}
+	return rezultat;
+}

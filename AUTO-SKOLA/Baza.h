@@ -1,9 +1,36 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 #include "sqlite3.h"
 #include "StmtPtr.h"
 using namespace std;
+struct Automobil {
+	int ID;
+	string Marka;
+	string Registracija;
+};
+struct Instruktor {
+	int ID;
+	string ImePrezime;
+	string JMBG;
+};
+struct Kandidat {
+	int ID;
+	string ImePrezime;
+	string DatumRodjenja;
+	string JMBG;
+};
+struct Polaganje {
+	string ImePrezimeKandidata;
+	string JMBG;
+	string ImePrezimeInstruktora;
+	string MarkaAutomobila;
+	string RegistarskaOznaka;
+	string Kategorija;
+	string DatumPolaganja;
+	string Polozio;
+};
 class Baza {
 	sqlite3* db;
 public:
@@ -11,6 +38,10 @@ public:
 	~Baza();
 	void IzvrsiUpit(string sql, string PorukaGreske);
 	void KreirajTabelu();
+	vector<Automobil>UzmiSveAutomobile();
+	vector<Instruktor>UzmiSveInstruktore();
+	vector<Kandidat>UzmiSveKandidate();
+	vector<Polaganje>UzmiSvaPolaganja();
 	void DodajAutomobil(string Marka, string Registracija);
 	void UkloniAutomobil(string Registracija);
 	void PrikaziSveAutomobile();
