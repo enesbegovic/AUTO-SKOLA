@@ -22,6 +22,7 @@ struct Kandidat {
 	string JMBG;
 };
 struct Polaganje {
+	int ID;
 	string ImePrezimeKandidata;
 	string JMBG;
 	string ImePrezimeInstruktora;
@@ -30,6 +31,19 @@ struct Polaganje {
 	string Kategorija;
 	string DatumPolaganja;
 	string Polozio;
+};
+struct StatusKandidata {
+	int ID;
+	string ImePrezime;
+	string DatumRodjenja;
+	string JMBG;
+	string Status;
+};
+struct PolaganjaInstruktora {
+	int ID;
+	string ImePrezime;
+	string JMBG;
+	int BrojPolaganja;
 };
 class Baza {
 	sqlite3* db;
@@ -42,6 +56,13 @@ public:
 	vector<Instruktor>UzmiSveInstruktore();
 	vector<Kandidat>UzmiSveKandidate();
 	vector<Polaganje>UzmiSvaPolaganja();
+	vector<Polaganje>UzmiSvaAktivnaPolaganja();
+	vector<Polaganje>UzmiSvaZavrsenaPolaganja();
+	Kandidat UzmiNajmladjegKandidata();
+	vector<StatusKandidata>UzmiSveStatuseKandidata();
+	vector<PolaganjaInstruktora> UzmiBrojPolaganjaZaSveInstruktore();
+	vector<PolaganjaInstruktora> UzmiSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja();
+	void UnesiRezultatePolaganja1(vector<pair<int, int>>Rezultati);
 	void DodajAutomobil(string Marka, string Registracija);
 	void UkloniAutomobil(string Registracija);
 	void PrikaziSveAutomobile();
