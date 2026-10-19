@@ -3,6 +3,9 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="DockerFile" />
+  </Folder>
   <Project Path="AUTO-SKOLA/AUTO-SKOLA.vcxproj" Id="28a10cea-30cd-48f4-a435-770ddd3abbbd" />
   <Project Path="AUTO-SKOLA_Server/AUTO-SKOLA_Server.vcxproj" Id="31c4c754-b8da-4afb-8764-1503f93f4349" />
   <Project Path="AUTO-SKOLA_Testovi/AUTO-SKOLA_Testovi.vcxproj" Id="4f254801-9a02-40d0-a87d-9134ad8b1f6c" />

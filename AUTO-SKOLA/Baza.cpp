@@ -718,7 +718,7 @@ void Baza::PrikaziSveKandidateSaNjihovimStatusom() {
 		"WHEN Polaganja.Polozio=1 THEN 'KANDIDAT JE POLOZIO' "
 		"ELSE 'KANDIDAT NIJE POLOZIO' END AS Status "
 		"FROM Kandidati "
-		"JOIN Polaganja ON Kandidati.ID=Polaganja.KandidatID;";
+		"LEFT JOIN Polaganja ON Kandidati.ID=Polaganja.KandidatID;";
 	int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &rawStmt, nullptr);
 	if (rc != SQLITE_OK) {
 		cout << "GRESKA PRI PRIPREMI PRIKAZA:" << sqlite3_errmsg(db) << endl;
