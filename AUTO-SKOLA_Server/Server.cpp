@@ -3,7 +3,7 @@
 #include "Baza.h"
 using json = nlohmann::json;
 int main() {
-	Baza baza("C:\\Users\\enesb\\source\\repos\\AUTO-SKOLA\\AUTO-SKOLA\\AUTO-SKOLA.db");
+	Baza baza("AUTO-SKOLA.db");
 	baza.KreirajTabelu();
 	httplib::Server server;
 	server.Get("/", [](const httplib::Request& req, httplib::Response& res) {
@@ -297,6 +297,6 @@ int main() {
 		res.set_content(rezultat.dump(4), "application/json");
 		});
 	std::cout << "Server Pokrenut Na http://localhost:8080" << std::endl;
-	server.listen("localhost", 8080);
+	server.listen("0.0.0.0", 8080);
 	return 0;
 }

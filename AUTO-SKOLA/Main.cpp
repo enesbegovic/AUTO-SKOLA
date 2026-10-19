@@ -3,7 +3,7 @@
 #include "Baza.h"
 using namespace std;
 int main() {
-	Baza baza("C:\\Users\\enesb\\source\\repos\\AUTO-SKOLA\\AUTO-SKOLA\\AUTO-SKOLA.db");
+	Baza baza("AUTO-SKOLA.db");
 	baza.KreirajTabelu();
 	int izbor;
 	do {
