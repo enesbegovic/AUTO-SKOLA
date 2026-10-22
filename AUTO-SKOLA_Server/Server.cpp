@@ -8,6 +8,10 @@
 using namespace std;
 using json = nlohmann::json;
 int main() {
+	if (sodium_init() < 0) {
+		cout << "Libsodium nije inicijalizovan" << endl;
+		return 1;
+	}
 	Baza baza("AUTO-SKOLA.db");
 	struct Sesija {
 		string UserName;
@@ -55,6 +59,7 @@ int main() {
 			if (crypto_pwhash_str(hash, PassWord.c_str(), PassWord.size(), crypto_pwhash_OPSLIMIT_INTERACTIVE, crypto_pwhash_MEMLIMIT_INTERACTIVE)!=0) {
 				res.status = 500;
 				res.set_content("{\"Greska\":\"Hashiranje nije uspijelo\"}", "application/json");
+				return;
 			}
 			baza.DodajKorisnika(UserName, hash);
 			json Poruka;
