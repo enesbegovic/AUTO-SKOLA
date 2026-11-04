@@ -2,6 +2,7 @@
 #include <mutex>
 #include <map>
 #include <chrono>
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include<httplib.h>
 #include<nlohmann/json.hpp>
 #include "Baza.h"
@@ -21,7 +22,11 @@ int main() {
 	std::map<string, Sesija>sesije;
 	std::mutex sesijeMutex;
 	baza.KreirajTabelu();
-	httplib::Server server;
+	httplib::SSLServer server("cert.pem","key.pem");
+	if (!server.is_valid()) {
+		std::cout << "Greska: certifikat ili kljuc nije ucitan" << std::endl;
+		return 1;
+	}
 	server.set_pre_routing_handler([&sesije, &sesijeMutex](const httplib::Request& req, httplib::Response& res) {
 		if (req.path == "/" || req.path == "/register" || req.path == "/login") {
 			return httplib::Server::HandlerResponse::Unhandled;
@@ -412,7 +417,7 @@ int main() {
 		}
 		res.set_content(rezultat.dump(4), "application/json");
 		});
-	std::cout << "Server Pokrenut Na http://localhost:8080" << std::endl;
+	std::cout << "Server Pokrenut Na https://localhost:8080" << std::endl;
 	server.listen("0.0.0.0", 8080);
 	return 0;
 }
