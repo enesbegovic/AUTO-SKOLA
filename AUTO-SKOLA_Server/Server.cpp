@@ -58,6 +58,78 @@ int main() {
 		res.set_content("{\"Greska\":\"Nevazeci ili istekao token\"}", "application/json");
 		return httplib::Server::HandlerResponse::Handled;
 		});
+	server.Put("/korisnici/:username/uloga", [&baza, &sesije, &sesijeMutex, &ulogeMutex](const httplib::Request& req, httplib::Response& res) {
+		json tijelo = json::parse(req.body, nullptr, false);
+		if (tijelo.is_discarded() || !tijelo.is_object() || !tijelo.contains("uloga") || !tijelo["uloga"].is_string()) {
+			res.status = 400;
+			res.set_content("{\"Greska\":\"Tijelo nije validno\"}", "application/json");
+			return;
+		}
+		string NovaUloga = tijelo["uloga"];
+		if (NovaUloga != "admin" && NovaUloga != "korisnik") {
+			res.status = 400;
+			res.set_content("{\"Greska\":\"Nedozvoljena uloga\"}", "application/json");
+			return;
+		}
+		string auth = req.get_header_value("Authorization");
+		string Prefiks = "Bearer ";
+		string token = auth.substr(Prefiks.size(), 0);
+		string Pozivalac;
+		{
+			std::lock_guard<mutex>lockSesije(sesijeMutex);
+			auto it = sesije.find(token);
+			if (it == sesije.end()) {
+				res.status = 401;
+				res.set_content("{\"Greska\":\"Neispravan token\"}", "application/json");
+				return;
+			}
+			Pozivalac = it->second.UserName;
+		}
+		string meta = req.path_params.at("username");
+		std::lock_guard<mutex>lockUloge(ulogeMutex);
+		string StaraUloga = baza.UzmiUlogu(meta);
+		if (StaraUloga.empty()) {
+			res.status = 404;
+			res.set_content("{\"Greska\":\"Nepostojeci korisnik\"}", "application/json");
+			return;
+		}
+		if (StaraUloga == NovaUloga) {
+			res.status = 200;
+			res.set_content("{\"Poruka\":\Uloga je vec postavljena\"}", "application/json");
+			return;
+		}
+		if (StaraUloga == "admin") {
+			int BrojAdmina = baza.BrojAdmina("admin");
+			if (BrojAdmina < 0) {
+				res.status = 500;
+				res.set_content("{\"Greska\":\"Greska Baze\"}", "application/json");
+				return;
+			}
+			if (BrojAdmina <= 1 || meta == Pozivalac) {
+				res.status = 409;
+				res.set_content("{\"Greska\":\"Ne mozete ukloniti zadnjeg admina ili sebe\"}", "application/json");
+				return;
+			}
+		}
+		if (!baza.DodajUlogu(meta, NovaUloga)) {
+			res.status = 500;
+			res.set_content("{\"Greska\":\"Neuspjela promjena uloge\"}", "application/json");
+			return;
+		}
+		{
+			std::lock_guard<mutex>lockSesije(sesijeMutex);
+			for (auto it = sesije.begin(); it != sesije.end();) {
+				if (it->second.UserName == meta) {
+					it=sesije.erase(it);
+				}
+				else {
+					++it;
+				}
+			}
+		}
+		res.status = 200;
+		res.set_content("{\"Poruka\":\"Uloga uspijesno azurirana\"}", "application/json");
+		});
 	server.Get("/", [](const httplib::Request& req, httplib::Response& res) {
 		res.set_content("Server Radi!!!", "text/plain");
 		});
