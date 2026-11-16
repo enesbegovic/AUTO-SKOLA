@@ -73,7 +73,7 @@ int main() {
 		}
 		string auth = req.get_header_value("Authorization");
 		string Prefiks = "Bearer ";
-		string token = auth.substr(Prefiks.size(), 0);
+		string token = auth.substr(Prefiks.size());
 		string Pozivalac;
 		{
 			std::lock_guard<mutex>lockSesije(sesijeMutex);
