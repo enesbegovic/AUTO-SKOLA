@@ -89,6 +89,7 @@ public:
 	void PrikaziSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja();
 	void DodajKorisnika(string UserName, string PasswordHash);
 	string UzmiHash(string UserName);
-	void DodajUlogu(string UserName, string Uloga);
+	bool DodajUlogu(string UserName, string Uloga);
 	string UzmiUlogu(string UserName);
+	int BrojAdmina(string Admin);
 };
