@@ -8,21 +8,35 @@
 #include "Baza.h"
 using namespace std;
 using json = nlohmann::json;
+struct Sesija {
+	string UserName;
+	string Uloga;
+	std::chrono::steady_clock::time_point istice;
+};
+struct Pokusaji {
+	int brojPokusaja = 0;
+	std::chrono::steady_clock::time_point Blokadado{};
+};
+string UlogaIzTokena(const httplib::Request& req, map<string, Sesija>& sesije, mutex& sesijeMutex) {
+	string auth = req.get_header_value("Authorization");
+	string Prefiks = "Bearer ";
+	if (auth.rfind(Prefiks, 0) != 0) {
+		return "";
+	}
+	string token = auth.substr(Prefiks.size());
+	std::lock_guard<mutex>lock(sesijeMutex);
+	auto it = sesije.find(token);
+	if (it == sesije.end()) {
+		return "";
+	}
+	return it->second.Uloga;
+}
 int main() {
 	if (sodium_init() < 0) {
 		cout << "Libsodium nije inicijalizovan" << endl;
 		return 1;
 	}
 	Baza baza("AUTO-SKOLA.db");
-	struct Sesija {
-		string UserName;
-		string Uloga;
-		std::chrono::steady_clock::time_point istice;
-	};
-	struct Pokusaji {
-		int brojPokusaja = 0;
-		std::chrono::steady_clock::time_point Blokadado{};
-	};
 	std::map<string, Sesija>sesije;
 	std::map<string, Pokusaji>pokusaji;
 	std::mutex sesijeMutex;
@@ -278,14 +292,17 @@ int main() {
 			res.set_content(Greska.dump(4), "application/json");
 		}
 		});
-	server.Get("/Instruktori", [&baza](const httplib::Request& req, httplib::Response& res) {
+	server.Get("/Instruktori", [&baza,&sesije,&sesijeMutex](const httplib::Request& req, httplib::Response& res) {
 		std::vector<Instruktor>instruktori = baza.UzmiSveInstruktore();
+		bool jeAdmin = (UlogaIzTokena(req,sesije,sesijeMutex) == "admin");
 		json rezultat = json::array();
 		for (const auto& i : instruktori) {
 			json ji;
 			ji["ID"] = i.ID;
 			ji["Ime i Prezime"] = i.ImePrezime;
-			ji["JMBG:"] = i.JMBG;
+			if (jeAdmin) {
+				ji["JMBG"] = i.JMBG;
+			}
 			rezultat.push_back(ji);
 		}
 		res.set_content(rezultat.dump(4), "application/json");
@@ -332,7 +349,6 @@ int main() {
 			jk["ID"] = k.ID;
 			jk["Ime i Prezime"] = k.ImePrezime;
 			jk["Datum Rodjenja"] = k.DatumRodjenja;
-			jk["JMBG"] = k.JMBG;
 			rezultat.push_back(jk);
 		}
 		res.set_content(rezultat.dump(4), "application/json");
@@ -379,7 +395,6 @@ int main() {
 			json jp;
 			jp["ID"] = p.ID;
 			jp["Ime i Prezime Kandidata"] = p.ImePrezimeKandidata;
-			jp["JMBG Kandidata"] = p.JMBG;
 			jp["Ime i Prezime Instruktora"] = p.ImePrezimeInstruktora;
 			jp["Automobil Na Kojem Kandidat Polaze"] = p.MarkaAutomobila;
 			jp["Registarska Oznaka Automobila"] = p.RegistarskaOznaka;
@@ -440,7 +455,6 @@ int main() {
 			json jp;
 			jp["ID"] = p.ID;
 			jp["Ime i Prezime Kandidata"] = p.ImePrezimeKandidata;
-			jp["JMBG Kandidata"] = p.JMBG;
 			jp["Ime i Prezime Instruktora"] = p.ImePrezimeInstruktora;
 			jp["Automobil Na Kojem Kandidat Polaze"] = p.MarkaAutomobila;
 			jp["Registarska Oznaka Automobila"] = p.RegistarskaOznaka;
@@ -459,7 +473,6 @@ int main() {
 			json jp;
 			jp["ID"] = p.ID;
 			jp["Ime i Prezime Kandidata"] = p.ImePrezimeKandidata;
-			jp["JMBG Kandidata"] = p.JMBG;
 			jp["Ime i Prezime Instruktora"] = p.ImePrezimeInstruktora;
 			jp["Automobil Na Kojem Kandidat Polaze"] = p.MarkaAutomobila;
 			jp["Registarska Oznaka Automobila"] = p.RegistarskaOznaka;
@@ -476,7 +489,6 @@ int main() {
 		rezultat["ID"] = k.ID;
 		rezultat["Ime i Prezime"] = k.ImePrezime;
 		rezultat["Datum Rodjenja"] = k.DatumRodjenja;
-		rezultat["JMBG"] = k.JMBG;
 		res.set_content(rezultat.dump(4), "application/json");
 		});
 	server.Get("/Kandidati/Status", [&baza](const httplib::Request& req, httplib::Response& res) {
@@ -487,33 +499,38 @@ int main() {
 			js["ID"] = s.ID;
 			js["Ime i Prezime"] = s.ImePrezime;
 			js["Datum Rodjenja"] = s.DatumRodjenja;
-			js["JMBG"] = s.JMBG;
 			js["Status Polaganja"] = s.Status;
 			rezultat.push_back(js);
 		}
 		res.set_content(rezultat.dump(4), "application/json");
 		});
-	server.Get("/Instruktori/BrojPolaganja", [&baza](const httplib::Request& req, httplib::Response& res) {
+	server.Get("/Instruktori/BrojPolaganja", [&baza,&sesije,&sesijeMutex](const httplib::Request& req, httplib::Response& res) {
 		std::vector<PolaganjaInstruktora>brpolagnja = baza.UzmiBrojPolaganjaZaSveInstruktore();
+		bool jeAdmin = (UlogaIzTokena(req,sesije,sesijeMutex) == "admin");
 		json rezultat = json::array();
 		for (const auto& bp : brpolagnja) {
 			json jbp;
 			jbp["ID"] = bp.ID;
 			jbp["Ime i Prezime"] = bp.ImePrezime;
-			jbp["JMBG"] = bp.JMBG;
+			if (jeAdmin) {
+				jbp["JMBG"] = bp.JMBG;
+			}
 			jbp["Broj Polaganja"] = bp.BrojPolaganja;
 			rezultat.push_back(jbp);
 		}
 		res.set_content(rezultat.dump(4), "application/json");
 		});
-	server.Get("/Instruktori/ZauzetiInstruktori", [&baza](const httplib::Request& req, httplib::Response& res) {
+	server.Get("/Instruktori/ZauzetiInstruktori", [&baza,&sesije,&sesijeMutex](const httplib::Request& req, httplib::Response& res) {
 		std::vector<PolaganjaInstruktora> polaganja = baza.UzmiSveInstruktoreKojiImajuViseOdJednogAktivnogPolaganja();
+		bool jeAdmin = (UlogaIzTokena(req,sesije,sesijeMutex) == "admin");
 		json rezultat = json::array();
 		for (const auto& x : polaganja) {
 			json jpi;
 			jpi["ID"] = x.ID;
 			jpi["Ime i Prezime"] = x.ImePrezime;
-			jpi["JMBG"] = x.JMBG;
+			if (jeAdmin) {
+				jpi["JMBG"] = x.JMBG;
+			}
 			jpi["Broj Polaganja"] = x.BrojPolaganja;
 			rezultat.push_back(jpi);
 		}
