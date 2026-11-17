@@ -34,7 +34,7 @@ int main() {
 		return 1;
 	}
 	server.set_pre_routing_handler([&sesije, &sesijeMutex](const httplib::Request& req, httplib::Response& res) {
-		if (req.path == "/" || req.path == "/register" || req.path == "/login") {
+		if (req.path == "/" || req.path == "/login") {
 			return httplib::Server::HandlerResponse::Unhandled;
 		}
 		string auth = req.get_header_value("Authorization");
